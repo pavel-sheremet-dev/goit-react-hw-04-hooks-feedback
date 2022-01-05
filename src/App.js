@@ -31,7 +31,6 @@ export default class App extends Component {
     const total = this.countTotalFeedbacks(this.state);
     const positive = this.countPositiveFeedbacks(total);
     const statisticsData = { ...this.state, total, positive };
-
     return (
       <>
         <Container>
