@@ -1,50 +1,50 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 
 import Container from './components/container/Container';
 import Section from './components/section/Section';
 import FeedbackOptions from './components/feedbackOptions/FeedbackOptions';
 import Statistics from './components/statistics/Statistics';
 
-export default class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
+const App = () => {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+
+  const onLeaveFeedback = name => {
+    switch (name) {
+      case 'good':
+        setGood(prev => prev + 1);
+        break;
+      case 'neutral':
+        setNeutral(prev => prev + 1);
+        break;
+      case 'bad':
+        setBad(prev => prev + 1);
+        break;
+      default:
+        break;
+    }
   };
 
-  onLeaveFeedback = name => {
-    this.setState(prevState => ({
-      [name]: (prevState[name] += 1),
-    }));
-  };
+  const total = good + neutral + bad;
+  const positive = `${Math.round((good / total) * 100)}%`;
+  const statisticsData = { good, neutral, bad, total, positive };
 
-  countTotalFeedbacks = state =>
-    Object.values(state).reduce((acc, option) => acc + option, 0);
+  return (
+    <>
+      <Container>
+        <Section title="Please rate the product">
+          <FeedbackOptions
+            data={{ good, neutral, bad }}
+            onBtnClick={onLeaveFeedback}
+          />
+        </Section>
+        <Section title="Rating statistics">
+          {total ? <Statistics data={statisticsData} /> : <p>No stats yet</p>}
+        </Section>
+      </Container>
+    </>
+  );
+};
 
-  countTotalFeedbacks = state =>
-    Object.values(state).reduce((acc, option) => acc + option, 0);
-
-  countPositiveFeedbacks = total =>
-    `${Math.round((this.state.good / total) * 100)}%`;
-
-  render() {
-    const total = this.countTotalFeedbacks(this.state);
-    const positive = this.countPositiveFeedbacks(total);
-    const statisticsData = { ...this.state, total, positive };
-    return (
-      <>
-        <Container>
-          <Section title="Please rate the product">
-            <FeedbackOptions
-              data={this.state}
-              onBtnClick={this.onLeaveFeedback}
-            />
-          </Section>
-          <Section title="Rating statistics">
-            {total ? <Statistics data={statisticsData} /> : <p>No stats yet</p>}
-          </Section>
-        </Container>
-      </>
-    );
-  }
-}
+export default App;
